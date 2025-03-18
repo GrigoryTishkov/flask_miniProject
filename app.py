@@ -12,9 +12,9 @@ def home():
     now = datetime.datetime.now()
     if 18 <= now.hour < 22:
         greeting = 'Добрый вечер'
-    elif now.hour >= 12:
+    elif 12 >= now.hour < 18:
         greeting = 'Добрый день'
-    elif now.hour >= 6:
+    elif 6 >= now.hour < 12:
         greeting = 'Доброе утро'
     else:
         greeting = 'Доброй ночи'
@@ -24,9 +24,6 @@ def home():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     form = LoginForm()
-    if form.validate_on_submit():
-        if form.submit_reg.data:
-            return redirect(url_for("register"))
     return render_template("login.html", title="Вход", form=form)
 
 

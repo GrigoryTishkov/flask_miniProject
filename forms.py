@@ -10,7 +10,7 @@ class LoginForm(FlaskForm):
     "Введите пароль"})
     remember_me = BooleanField("Remember me", validators=[DataRequired()], render_kw={"class": "form-check-input"})
     submit_by = SubmitField("Авторизоваться", render_kw={"class": "btn btn-primary"})
-    submit_reg = SubmitField("Зарегистрироваться", render_kw={"class": "btn btn-secondary"})
+    #submit_reg = SubmitField("Зарегистрироваться", render_kw={"class": "btn btn-secondary"})
 
 
 class RegisterForm(FlaskForm):

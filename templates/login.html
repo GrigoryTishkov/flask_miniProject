@@ -1,0 +1,36 @@
+{%  extends 'base.html'  %}
+
+{%  block content  %}
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="text-center">Вход на сайт</h1>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('login') }}" method="POST" name="login" novalidate>
+                        {{   form.hidden_tag()   }}
+                        <div class="mb-3">
+                            {{ form.username.label }}
+                            {{ form.username() }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.password.label }}
+                            {{ form.password() }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.remember_me.label }}
+                            {{ form.remember_me() }}
+                        </div>
+                        <div class="text-center">
+                            {{ form.submit_by() }}
+                            {{ form.submit_reg() }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{%  endblock  %}

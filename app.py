@@ -1,15 +1,22 @@
-from flask import Flask, render_template, flash, redirect, url_for
+from flask import Flask, render_template, flash, redirect, url_for, request
 from config import Config
+from urllib.parse import urlsplit
+from flask_login import LoginManager, current_user, login_user, logout_user
 from forms import LoginForm, RegisterForm
-from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+import sqlalchemy as sa
+from models import User
+from extensions import db, login
+
 import datetime
 
 app = Flask(__name__)
 app.config.from_object(Config)
 
-db = SQLAlchemy(app)
+db.init_app(app)
+login.init_app(app)
 migrate = Migrate(app, db)
+
 
 @app.route("/")
 @app.route("/index")
@@ -28,13 +35,26 @@ def home():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
     form = LoginForm()
-    error = None
     if form.validate_on_submit():
-        flash('Login requested for user {}, remember_me={}'.format(
-            form.username.data, form.remember_me.data))
-        return redirect(url_for("home"))
+        user = db.session.scalar(sa.select(User).where(User.username == form.username.data))
+        if user is None or not user.check_password(form.password.data):
+            flash('Неверное имя пользователя или пароль')
+            return redirect(url_for('login'))
+        login_user(user, remember=form.remember_me.data)
+        next_page = request.args.get('next')
+        if not next_page or not urlsplit(next_page).netloc == '':
+            next_page = url_for('home')
+        return redirect(next_page)
     return render_template("login.html", title="Вход", form=form)
+
+
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
 
 
 @app.route("/register", methods=["GET", "POST"])

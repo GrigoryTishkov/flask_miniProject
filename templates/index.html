@@ -2,8 +2,12 @@
 
 
 {% block content %}
-
-<h1>{{  greeting  }}, Гость!</h1>
-<p>Добро пожаловать на сайт.</p>
+{% if current_user.is_authenticated %}
+    <h1>{{  greeting   }}, {{ current_user.username }}!</h1>
+    <p>Добро пожаловать на сайт.</p>
+{% else %}
+    <h1>{{  greeting   }}, Гость!</h1>
+    <p>Добро пожаловать на сайт.</p>
+{% endif %}
 <a class="btn btn-primary" href="{{ url_for('add')  }}">Добавление товара</a>
-{% endblock%}
+{% endblock %}

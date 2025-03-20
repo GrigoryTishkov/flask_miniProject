@@ -4,13 +4,13 @@ from wtforms.validators import DataRequired
 
 
 class LoginForm(FlaskForm):
-    username = StringField("Username", validators=[DataRequired()], render_kw={"class": "form-control", "placeholder":
+    username = StringField("Username", validators=[DataRequired(message="Это поле обязательно для заполнения")], render_kw={"class": "form-control", "placeholder":
     "Введите имя пользователя"})
-    password = PasswordField("Password", validators=[DataRequired()], render_kw={"class": "form-control", "placeholder":
+    password = PasswordField("Password", validators=[DataRequired(message="Это поле обязательно для заполнения")], render_kw={"class": "form-control", "placeholder":
     "Введите пароль"})
-    remember_me = BooleanField("Remember me", validators=[DataRequired()], render_kw={"class": "form-check-input"})
+    remember_me = BooleanField("Remember me", render_kw={"class": "form-check-input"})
     submit_by = SubmitField("Авторизоваться", render_kw={"class": "btn btn-primary"})
-    #submit_reg = SubmitField("Зарегистрироваться", render_kw={"class": "btn btn-secondary"})
+    # submit_reg = SubmitField("Зарегистрироваться", render_kw={"class": "btn btn-secondary"})
 
 
 class RegisterForm(FlaskForm):

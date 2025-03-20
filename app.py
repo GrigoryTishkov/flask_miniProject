@@ -1,20 +1,25 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, flash, redirect, url_for
 from config import Config
 from forms import LoginForm, RegisterForm
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 import datetime
 
 app = Flask(__name__)
 app.config.from_object(Config)
 
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 @app.route("/")
+@app.route("/index")
 def home():
     now = datetime.datetime.now()
     if 18 <= now.hour < 22:
         greeting = 'Добрый вечер'
-    elif 12 >= now.hour < 18:
+    elif 12 <= now.hour < 18:
         greeting = 'Добрый день'
-    elif 6 >= now.hour < 12:
+    elif 6 <= now.hour < 12:
         greeting = 'Доброе утро'
     else:
         greeting = 'Доброй ночи'
@@ -24,6 +29,11 @@ def home():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     form = LoginForm()
+    error = None
+    if form.validate_on_submit():
+        flash('Login requested for user {}, remember_me={}'.format(
+            form.username.data, form.remember_me.data))
+        return redirect(url_for("home"))
     return render_template("login.html", title="Вход", form=form)
 
 

@@ -30,3 +30,9 @@ class RegisterForm(FlaskForm):
                               render_kw={"class": "form-control", "placeholder": "Введите пароль"})
     remember_me = BooleanField("Remember me", render_kw={"class": "form-check-input"})
     submit_by = SubmitField("Зарегистрироваться", render_kw={"class": "btn btn-primary"})
+
+    def validate_username(self, username):
+        pass
+
+    def validate_email(self, email):
+        pass

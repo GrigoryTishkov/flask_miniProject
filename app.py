@@ -1,10 +1,11 @@
 from flask import Flask, render_template, flash, redirect, url_for, request
 from config import Config
 from urllib.parse import urlsplit
-from flask_login import LoginManager, current_user, login_user, logout_user
+from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from forms import LoginForm, RegisterForm
 from flask_migrate import Migrate
 import sqlalchemy as sa
+import sqlalchemy.orm as so
 from models import User
 from extensions import db, login
 
@@ -16,6 +17,12 @@ app.config.from_object(Config)
 db.init_app(app)
 login.init_app(app)
 migrate = Migrate(app, db)
+
+
+# Отладочная функция
+@app.shell_context_processor
+def make_shell_context():
+    return {'sa': sa, 'so': so, 'db': db, 'User': User}
 
 
 @app.route("/")
@@ -36,7 +43,7 @@ def home():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('index'))
+        return redirect(url_for('home'))
     form = LoginForm()
     if form.validate_on_submit():
         user = db.session.scalar(sa.select(User).where(User.username == form.username.data))
@@ -59,8 +66,24 @@ def logout():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     form = RegisterForm()
+    if form.validate_on_submit():
+        user = User(username=form.username.data, email=form.email.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash('пользователь успешно зарегистрирован!')
+        return redirect(url_for("home"))
     return render_template("register.html", title="Регистрация", form=form)
+
+
+@app.route('/profile/<username>')
+@login_required
+def profile(username):
+    user = db.first_or_404(sa.select(User).where(username == User.username))
+    return render_template('profile.html', user=user)
 
 
 @app.route("/add")

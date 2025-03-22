@@ -9,7 +9,7 @@
                     <h1 class="text-center">Регистрация</h1>
                 </div>
                 <div class="card-body">
-                    <form action="{{ url_for('login') }}" method="POST" name="login" novalidate>
+                    <form action="{{ url_for('register') }}" method="POST" name="login" novalidate>
                         {{   form.hidden_tag()   }}
                         <div class="mb-3">
                             {{ form.username.label }}
@@ -30,9 +30,9 @@
                             {% endfor %}
                         </div>
                         <div class="mb-3">
-                            {{ form.password1.label }}
-                            {{ form.password1() }}
-                            {% for error in form.password1.errors %}
+                            {{ form.password.label }}
+                            {{ form.password() }}
+                            {% for error in form.password.errors %}
                             <div class="text-danger">
                                 {{ error }}
                             </div>
